@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GRYP — Gear that holds up</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Expanded:wght@700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0E0E0F;
+    --surface: #1A1A1C;
+    --surface-2: #232325;
+    --ink: #E8E6E1;
+    --muted: #8A8A8E;
+    --accent: #C4FF4D;
+    --line: #33333600;
+    --border: #3A3A3D;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Texture overlay */
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(255,255,255,0.015) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(196,255,77,0.02) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .display {
+    font-family: 'Archivo Expanded', sans-serif;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+  }
+
+  .mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  /* ===== Header ===== */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem clamp(1.5rem, 5vw, 4rem);
+    background: rgba(14,14,15,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo-group {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .logo {
+    font-size: 1.4rem;
+    letter-spacing: 0.05em;
+    position: relative;
+  }
+
+  .chalk-mark {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+  }
+
+  nav {
+    display: flex;
+    gap: clamp(1rem, 3vw, 2.5rem);
+    align-items: center;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  nav a {
+    color: var(--muted);
+    transition: color 0.2s ease;
+    position: relative;
+  }
+
+  nav a:hover, nav a:focus-visible {
+    color: var(--ink);
+  }
+
+  nav a.cta {
+    color: var(--bg);
+    background: var(--accent);
+    padding: 0.55rem 1.2rem;
+    border-radius: 2px;
+    font-weight: 600;
+  }
+
+  nav a.cta:hover, nav a.cta:focus-visible {
+    background: var(--ink);
+  }
+
+  @media (max-width: 640px) {
+    nav { gap: 1rem; }
+    nav a:not(.cta) { display: none; }
+  }
+
+  /* ===== Hero — Spec Sheet ===== */
+  .hero {
+    position: relative;
+    padding: clamp(3rem, 8vw, 6rem) clamp(1.5rem, 5vw, 4rem) clamp(2rem, 6vw, 4rem);
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: clamp(2rem, 5vw, 5rem);
+    align-items: center;
+    max-width: 1400px;
+    margin: 0 auto;
+    z-index: 1;
+  }
+
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; padding-top: 2rem; }
+  }
+
+  .hero-copy .eyebrow {
+    font-size: 0.8rem;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    margin-bottom: 1.2rem;
+    display: block;
+  }
+
+  .hero-copy h1 {
+    font-size: clamp(2.8rem, 7vw, 5.2rem);
+    line-height: 0.98;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-copy h1 span {
+    color: var(--accent);
+  }
+
+  .hero-copy p {
+    color: var(--muted);
+    font-size: 1.05rem;
+    max-width: 32ch;
+    margin-bottom: 2rem;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary, .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.9rem 1.8rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border-radius: 2px;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  .btn-primary:hover, .btn-primary:focus-visible {
+    background: var(--ink);
+    transform: translateY(-1px);
+  }
+
+  .btn-secondary {
+    border-color: var(--border);
+    color: var(--ink);
+  }
+
+  .btn-secondary:hover, .btn-secondary:focus-visible {
+    border-color: var(--ink);
+  }
+
+  /* Spec sheet visual */
+  .spec-sheet {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: clamp(1.5rem, 3vw, 2.5rem);
+    position: relative;
+  }
+
+  .spec-sheet-label {
+    font-size: 0.75rem;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .strap-render {
+    width: 100%;
+    height: auto;
+    margin-bottom: 1.5rem;
+    display: block;
+  }
+
+  .spec-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    border-top: 1px solid var(--border);
+    padding-top: 1.5rem;
+  }
+
+  .spec-item {
+    font-size: 0.85rem;
+  }
+
+  .spec-item .label {
+    color: var(--muted);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+  }
+
+  .spec-item .value {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .spec-item .value.accent {
+    color: var(--accent);
+  }
+
+  /* ===== Section headers ===== */
+  .section {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: clamp(2rem, 5vw, 4rem) clamp(1.5rem, 5vw, 4rem);
+    position: relative;
+    z-index: 1;
+  }
+
+  .section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 2.5rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1.2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .section-head h2 {
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+  }
+
+  .section-head .meta {
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+
+  /* ===== Rack / Products ===== */
+  .rack {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .rack-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: border-color 0.25s ease, transform 0.25s ease;
+    position: relative;
+  }
+
+  .rack-item:hover, .rack-item:focus-within {
+    border-color: var(--accent);
+    transform: translateY(-3px);
+  }
+
+  .rack-item .index {
+    position: absolute;
+    top: 1.2rem;
+    left: 1.2rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    z-index: 2;
+  }
+
+  .rack-visual {
+    aspect-ratio: 4/3;
+    background: var(--surface-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .rack-visual svg {
+    width: 100%;
+    height: 100%;
+    max-width: 220px;
+  }
+
+  .rack-item:hover .rack-visual svg .chalk-puff {
+    opacity: 1;
+  }
+
+  .chalk-puff {
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .rack-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .rack-body h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.02em;
+  }
+
+  .rack-body .desc {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-bottom: 1.2rem;
+    flex: 1;
+  }
+
+  .rack-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.2rem;
+  }
+
+  .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 0.25rem 0.6rem;
+    border-radius: 2px;
+    letter-spacing: 0.05em;
+  }
+
+  .rack-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--border);
+    padding-top: 1.2rem;
+    gap: 1rem;
+  }
+
+  .price {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+
+  .price .currency {
+    color: var(--muted);
+    font-size: 0.8rem;
+    margin-right: 0.2rem;
+  }
+
+  .buy-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--bg);
+    background: var(--accent);
+    padding: 0.6rem 1.1rem;
+    border-radius: 2px;
+    transition: background 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .buy-link:hover, .buy-link:focus-visible {
+    background: var(--ink);
+  }
+
+  .buy-link.disabled {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    pointer-events: none;
+  }
+
+  .buy-link svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* ===== Standards / why section ===== */
+  .standards {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .standards .section {
+    padding-top: clamp(3rem, 6vw, 5rem);
+    padding-bottom: clamp(3rem, 6vw, 5rem);
+  }
+
+  .standards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 2rem;
+  }
+
+  .standard-item .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--accent);
+    margin-bottom: 0.8rem;
+    display: block;
+  }
+
+  .standard-item h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.6rem;
+    letter-spacing: 0.01em;
+  }
+
+  .standard-item p {
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  /* ===== Footer ===== */
+  footer {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: clamp(2rem, 5vw, 4rem) clamp(1.5rem, 5vw, 4rem);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 2rem;
+    border-top: 1px solid var(--border);
+  }
+
+  footer .foot-brand .logo {
+    margin-bottom: 0.8rem;
+  }
+
+  footer .foot-brand p {
+    color: var(--muted);
+    font-size: 0.85rem;
+    max-width: 32ch;
+  }
+
+  .foot-links {
+    display: flex;
+    gap: 2.5rem;
+    flex-wrap: wrap;
+  }
+
+  .foot-col h4 {
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    margin-bottom: 0.8rem;
+    text-transform: uppercase;
+  }
+
+  .foot-col a {
+    display: block;
+    color: var(--ink);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    transition: color 0.2s ease;
+  }
+
+  .foot-col a:hover, .foot-col a:focus-visible {
+    color: var(--accent);
+  }
+
+  .foot-bottom {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 clamp(1.5rem, 5vw, 4rem) clamp(2rem, 4vw, 3rem);
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+    html { scroll-behavior: auto; }
+  }
+
+  /* Focus visibility */
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-group">
+    <svg class="chalk-mark" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M3 18C5 14 4 10 7 9C10 8 9 13 12 12C15 11 13 6 17 5C19.5 4.3 20.5 6.5 21 8" stroke="#C4FF4D" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <span class="logo display">GRYP</span>
+  </div>
+  <nav aria-label="Primary">
+    <a href="#rack">Gear</a>
+    <a href="#standards">Why GRYP</a>
+    <a href="#contact" class="cta">Get in touch</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="hero-copy">
+    <span class="eyebrow mono">// 04. UTILITY GEAR — NL</span>
+    <h1 class="display">Gear that<br>holds <span>up.</span></h1>
+    <p>Lifting straps, resistance bands, and chalk — built for the rep that matters most, the last one. No fluff, no markup theatre. Just gear that does its job.</p>
+    <div class="hero-actions">
+      <a href="#rack" class="btn-primary">View the rack</a>
+      <a href="#standards" class="btn-secondary">Why GRYP</a>
+    </div>
+  </div>
+
+  <div class="spec-sheet">
+    <div class="spec-sheet-label mono">
+      <span>GRYP-01 / LIFTING STRAP</span>
+      <span>SPEC SHEET</span>
+    </div>
+    <svg class="strap-render" viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Diagram of a cotton lifting strap with padded wrist loop and wrap-around tail">
+      <!-- Strap body -->
+      <rect x="40" y="95" width="280" height="30" rx="4" fill="#2E2E31" stroke="#3A3A3D" stroke-width="1"/>
+      <!-- Stitching lines -->
+      <line x1="50" y1="100" x2="310" y2="100" stroke="#4A4A4D" stroke-width="1" stroke-dasharray="4 4"/>
+      <line x1="50" y1="120" x2="310" y2="120" stroke="#4A4A4D" stroke-width="1" stroke-dasharray="4 4"/>
+      <!-- Wrist loop -->
+      <ellipse cx="65" cy="110" rx="38" ry="48" fill="none" stroke="#C4FF4D" stroke-width="3"/>
+      <!-- Padding patch -->
+      <rect x="48" y="98" width="34" height="24" rx="3" fill="#1A1A1C" stroke="#C4FF4D" stroke-width="1.5"/>
+      <!-- Wrap tail extending -->
+      <rect x="300" y="100" width="70" height="20" rx="3" fill="#2E2E31" stroke="#3A3A3D" stroke-width="1"/>
+      <!-- Annotation lines -->
+      <line x1="65" y1="62" x2="65" y2="40" stroke="#6B6B6F" stroke-width="1"/>
+      <circle cx="65" cy="40" r="2.5" fill="#C4FF4D"/>
+      <line x1="200" y1="95" x2="200" y2="40" stroke="#6B6B6F" stroke-width="1"/>
+      <circle cx="200" cy="40" r="2.5" fill="#C4FF4D"/>
+      <line x1="335" y1="100" x2="335" y2="180" stroke="#6B6B6F" stroke-width="1"/>
+      <circle cx="335" cy="180" r="2.5" fill="#C4FF4D"/>
+    </svg>
+    <div class="spec-grid mono">
+      <div class="spec-item">
+        <div class="label">Material</div>
+        <div class="value">12mm Cotton</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">Length</div>
+        <div class="value">60cm</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">Load rating</div>
+        <div class="value accent">180kg+</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">Padding</div>
+        <div class="value">Neoprene</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="rack">
+  <div class="section-head">
+    <h2 class="display">The Rack</h2>
+    <span class="meta mono">03 ITEMS — MORE LOADING SOON</span>
+  </div>
+
+  <div class="rack">
+
+    <!-- Product 1: Lifting Straps -->
+    <article class="rack-item">
+      <span class="index">01 / STRAP</span>
+      <div class="rack-visual">
+        <svg viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Pair of cotton lifting straps, folded">
+          <rect x="30" y="40" width="140" height="16" rx="3" fill="#3A3A3D"/>
+          <rect x="30" y="64" width="140" height="16" rx="3" fill="#2E2E31"/>
+          <ellipse cx="48" cy="48" rx="24" ry="30" fill="none" stroke="#C4FF4D" stroke-width="2.5"/>
+          <ellipse cx="48" cy="72" rx="24" ry="30" fill="none" stroke="#8A8A8E" stroke-width="2"/>
+          <g class="chalk-puff">
+            <circle cx="155" cy="35" r="3" fill="#C4FF4D" opacity="0.5"/>
+            <circle cx="165" cy="42" r="2" fill="#C4FF4D" opacity="0.4"/>
+            <circle cx="148" cy="28" r="1.5" fill="#C4FF4D" opacity="0.3"/>
+          </g>
+        </svg>
+      </div>
+      <div class="rack-body">
+        <h3>Cotton Lifting Straps</h3>
+        <p class="desc">Padded wrist loop, long wrap for deadlifts, rows, and pulls. Stops your grip giving out before your back does.</p>
+        <div class="rack-tags">
+          <span class="tag">COTTON</span>
+          <span class="tag">PADDED</span>
+          <span class="tag">PAIR</span>
+        </div>
+        <div class="rack-footer">
+          <span class="price"><span class="currency">€</span>14.95</span>
+          <a href="https://www.bol.com" class="buy-link" target="_blank" rel="noopener">
+            View on Bol.com
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+          </a>
+        </div>
+      </div>
+    </article>
+
+    <!-- Product 2: Resistance Bands -->
+    <article class="rack-item">
+      <span class="index">02 / BAND</span>
+      <div class="rack-visual">
+        <svg viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Set of resistance bands of varying thickness, looped">
+          <ellipse cx="100" cy="75" rx="55" ry="55" fill="none" stroke="#C4FF4D" stroke-width="6"/>
+          <ellipse cx="100" cy="75" rx="42" ry="42" fill="none" stroke="#8A8A8E" stroke-width="5"/>
+          <ellipse cx="100" cy="75" rx="29" ry="29" fill="none" stroke="#5A5A5D" stroke-width="4"/>
+          <g class="chalk-puff">
+            <circle cx="160" cy="30" r="3" fill="#C4FF4D" opacity="0.5"/>
+            <circle cx="170" cy="40" r="2" fill="#C4FF4D" opacity="0.4"/>
+          </g>
+        </svg>
+      </div>
+      <div class="rack-body">
+        <h3>Resistance Band Set</h3>
+        <p class="desc">Three resistance levels for warmups, mobility work, and assisted pull-ups. Latex, loop style, travels in a pocket.</p>
+        <div class="rack-tags">
+          <span class="tag">3 LEVELS</span>
+          <span class="tag">LATEX</span>
+          <span class="tag">SET OF 3</span>
+        </div>
+        <div class="rack-footer">
+          <span class="price"><span class="currency">€</span>12.95</span>
+          <a href="#" class="buy-link disabled" aria-disabled="true">
+            Coming soon
+          </a>
+        </div>
+      </div>
+    </article>
+
+    <!-- Product 3: Chalk -->
+    <article class="rack-item">
+      <span class="index">03 / CHALK</span>
+      <div class="rack-visual">
+        <svg viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Block of gym chalk with crumbled pieces">
+          <rect x="75" y="55" width="50" height="40" rx="2" fill="#E8E6E1"/>
+          <rect x="75" y="55" width="50" height="40" rx="2" fill="none" stroke="#8A8A8E" stroke-width="1"/>
+          <rect x="60" y="100" width="18" height="14" rx="2" fill="#cfcdc8"/>
+          <rect x="125" y="95" width="14" height="12" rx="2" fill="#cfcdc8"/>
+          <g class="chalk-puff">
+            <circle cx="100" cy="40" r="4" fill="#E8E6E1" opacity="0.6"/>
+            <circle cx="115" cy="35" r="2.5" fill="#E8E6E1" opacity="0.5"/>
+            <circle cx="88" cy="32" r="2" fill="#E8E6E1" opacity="0.4"/>
+            <circle cx="105" cy="25" r="1.5" fill="#C4FF4D" opacity="0.3"/>
+          </g>
+        </svg>
+      </div>
+      <div class="rack-body">
+        <h3>Gym Chalk Block</h3>
+        <p class="desc">Magnesium carbonate block, low-dust formula. For deadlifts, pull-ups, and anything that depends on your grip.</p>
+        <div class="rack-tags">
+          <span class="tag">LOW DUST</span>
+          <span class="tag">BLOCK</span>
+          <span class="tag">56g</span>
+        </div>
+        <div class="rack-footer">
+          <span class="price"><span class="currency">€</span>6.95</span>
+          <a href="#" class="buy-link disabled" aria-disabled="true">
+            Coming soon
+          </a>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<section class="standards" id="standards">
+  <div class="section">
+    <div class="section-head">
+      <h2 class="display">Why GRYP</h2>
+      <span class="meta mono">THE SHORT VERSION</span>
+    </div>
+    <div class="standards-grid">
+      <div class="standard-item">
+        <span class="num mono">01</span>
+        <h3>Checked before it ships</h3>
+        <p>Every batch gets inspected on the ground before it leaves the factory. Bad units don't make it to the listing.</p>
+      </div>
+      <div class="standard-item">
+        <span class="num mono">02</span>
+        <h3>Priced honestly</h3>
+        <p>No artificial discounts or fake "was €40" stickers. The price you see is the price, every day.</p>
+      </div>
+      <div class="standard-item">
+        <span class="num mono">03</span>
+        <h3>Small batches, on purpose</h3>
+        <p>We'd rather sell out and restock than sit on gear we're not confident in. Quality over volume.</p>
+      </div>
+      <div class="standard-item">
+        <span class="num mono">04</span>
+        <h3>Built around the Bol.com basics</h3>
+        <p>Fast NL/BE delivery, easy returns, and reviews you can actually read — all handled through Bol.com.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer id="contact">
+  <div class="foot-brand">
+    <div class="logo display">GRYP</div>
+    <p>Gym gear for people who train, not for people who post about training. Based in the Netherlands.</p>
+  </div>
+  <div class="foot-links">
+    <div class="foot-col">
+      <h4>Gear</h4>
+      <a href="#rack">Lifting straps</a>
+      <a href="#rack">Resistance bands</a>
+      <a href="#rack">Chalk</a>
+    </div>
+    <div class="foot-col">
+      <h4>Shop</h4>
+      <a href="https://www.bol.com" target="_blank" rel="noopener">Bol.com store</a>
+      <a href="#standards">Our standards</a>
+    </div>
+  </div>
+</footer>
+<div class="foot-bottom">
+  GRYP // NETHERLANDS // ALL ITEMS SOLD VIA BOL.COM
+</div>
+
+</body>
+</html>
